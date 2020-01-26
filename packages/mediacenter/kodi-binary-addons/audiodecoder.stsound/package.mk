@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="audiodecoder.stsound"
-PKG_VERSION="ea89e6bfbf47c970cdbcf511f297b6eeb42bfb8f"
-PKG_SHA256="41a35f9212994146fa81fdf5a9198fb92bd4df3d46b0362f96242a7b94286562"
-PKG_REV="2"
+PKG_VERSION="2.1.1-Matrix"
+PKG_SHA256="f9a15640e295a3e81d0b58f22a03a3851febc6e15c3ab18afa2e555d6ea6d053"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.kodi.tv"
+PKG_SITE="https://github.com/xbmc/audiodecoder.stsound"
 PKG_URL="https://github.com/xbmc/audiodecoder.stsound/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
 PKG_SECTION=""

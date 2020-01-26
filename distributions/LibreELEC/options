@@ -140,9 +140,6 @@
 # build and install remote support (yes / no)
   REMOTE_SUPPORT="yes"
 
-# build and install ATV IR remote support (yes / no)
-  ATVCLIENT_SUPPORT="yes"
-
 # build and install Joystick support (yes / no)
   JOYSTICK_SUPPORT="yes"
 
@@ -218,10 +215,13 @@
 
 # Settings package name - blank if not required
   DISTRO_PKG_SETTINGS="LibreELEC-settings"
-
-# IR remote protocols supported in default config
-  IR_REMOTE_PROTOCOLS="RC6 NEC"
+  DISTRO_PKG_SETTINGS_ID="service.libreelec.settings"
 
 # IR remote keymaps supported in default config
   IR_REMOTE_KEYMAPS="rc6_mce xbox_360 xbox_one"
 
+# debug tty path
+  DEBUG_TTY="/dev/tty3"
+
+# wireless daemon to use (wpa_supplicant/iwd)
+  WIRELESS_DAEMON="wpa_supplicant"

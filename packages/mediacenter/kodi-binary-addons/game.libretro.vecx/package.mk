@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.vecx"
-PKG_VERSION="8fbddce18a0f5bf0b4b4b34a35a60b35c0902967"
-PKG_SHA256="ad7c3e11735c9c7ca42caafb11710e39579e6f197bff6b3b2700550251d4c46a"
-PKG_REV="110"
+PKG_VERSION="1.2.0.6-Leia"
+PKG_SHA256="365c9561f66f3f7dfc70988e84d5131588a7b7a2458ceac6f2c801098dfb6894"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.vecx"

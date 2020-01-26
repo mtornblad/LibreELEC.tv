@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.vice"
-PKG_VERSION="89ed895d76f5654d0064ef8940e6d2aabe714780"
-PKG_SHA256="a4a2cae5033109ee7b22640ba0ed23747a4c0df6ef26276cdaf8c4efc0ca8fd5"
-PKG_REV="104"
+PKG_VERSION="3.3.0.6-Leia"
+PKG_SHA256="9613fed4b0880a73572df710eeb464101c9e599f15ade0852ab7eec81bd3fa23"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.vice"

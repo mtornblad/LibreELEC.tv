@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.mupen64plus"
-PKG_VERSION="c2fde802e38e47a80a0dd75df7780adf80d06014"
-PKG_SHA256="9514dbbdd8b7d8cfb7de96d36074a264ac67e021167a90878e1fb4d95326e376"
-PKG_REV="110"
+PKG_VERSION="2.5.0.6-Leia"
+PKG_SHA256="bad6dd3e677ac1fa897bbad2508e3e3c1b90f0ac390fadac6cd967863557e8ad"
+PKG_REV="115"
 # no openGL suport in retroplayer yet
 PKG_ARCH="none"
 PKG_LICENSE="GPL"

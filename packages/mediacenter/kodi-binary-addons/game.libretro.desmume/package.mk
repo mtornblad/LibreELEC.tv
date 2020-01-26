@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.desmume"
-PKG_VERSION="574b5c82f8797600a7b934c76f4d86b26fdf7c1c"
-PKG_SHA256="33446a6920b6222e3f64df4413bfd80eba372b5cd90883c450492da0a2209664"
-PKG_REV="109"
+PKG_VERSION="0.0.1.3-Leia"
+PKG_SHA256="43a6c01b6699e18732b6debf7656deb42dcded616e6ffecd0cdccaf0ef1e4de9"
+PKG_REV="1"
 # no openGL suport in retroplayer yet
 PKG_ARCH="none"
 PKG_LICENSE="GPL"

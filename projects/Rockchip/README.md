@@ -5,8 +5,8 @@ This project is for Rockchip SoC devices
 ## Devices
 
 **RK3288**
-* [ASUS Tinker Board](devices/TinkerBoard)
-* [mqmaker MiQi](devices/MiQi)
+* [ASUS Tinker Board](devices/RK3288)
+* [mqmaker MiQi](devices/RK3288)
 
 **RK3328**
 * [PINE64 ROCK64](devices/RK3328)
@@ -18,6 +18,7 @@ This project is for Rockchip SoC devices
 * [96rocks ROCK960](devices/RK3399)
 * [Khadas Edge](devices/RK3399)
 * [PINE64 RockPro64](devices/RK3399)
+* [Radxa ROCK Pi 4](devices/RK3399)
 * [Rockchip Sapphire Board](devices/RK3399)
 
 **My single-board computer is not listed, will it be added in the future?**<br />

@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="audiodecoder.usf"
-PKG_VERSION="37369f4c048e71f1561d77042fbd7dd1e413b1d8"
-PKG_SHA256="a5fbd711bf70b59f85f8b7bd63c4662a3d3a01d4e907e0c53cf0af9ccc02b40a"
-PKG_REV="2"
+PKG_VERSION="3.0.0-Matrix"
+PKG_SHA256="e5d52dbe6a880a0f3a1f83d91f9a568277028d098e3cf3633994a82105d3945e"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/xbmc/audiodecoder.usf"
@@ -17,4 +17,4 @@ PKG_LONGDESC="audiodecoder.usf"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_TYPE="kodi.audiodecoder"
-PKG_ADDON_PROJECTS="Generic Nvidia_Legacy RPi2 imx6 WeTek_Play"
+PKG_ADDON_PROJECTS="any !RPi1 !Slice"

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.beetle-ngp"
-PKG_VERSION="d578ef123a16155bae8c3ad01ad31cc106ddb3b5"
-PKG_SHA256="2e8f70a59ddbbc4937e4d63d9ec8d64f50c18ec44a4b60ff143ecc529052c49c"
-PKG_REV="110"
+PKG_VERSION="0.9.36.5-Leia"
+PKG_SHA256="70f27fab48488d7f0979cdb47d2d230477a2137221fdefe3b1820982305e0a97"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.beetle-ngp"

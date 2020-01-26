@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="intel-vaapi-driver"
-PKG_VERSION="2.3.0"
-PKG_SHA256="fcc3f09291e58fd316fd015d4e1329e7e03c38cffa4651bda725d500a66aa74e"
+PKG_VERSION="2.4.0"
+PKG_SHA256="58567dac882167021f031489062cbbab76bc646214be0ee44d5f724d960b3d76"
 PKG_ARCH="x86_64"
 PKG_LICENSE="GPL"
 PKG_SITE="https://01.org/linuxmedia"
@@ -21,5 +22,4 @@ else
 fi
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-silent-rules \
-                           --enable-drm \
                            $DISPLAYSERVER_LIBVA"

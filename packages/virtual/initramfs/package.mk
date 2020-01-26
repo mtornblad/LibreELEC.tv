@@ -1,36 +1,40 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="initramfs"
 PKG_VERSION=""
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.openelec.tv"
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain libc:init busybox:init linux:init plymouth-lite:init util-linux:init e2fsprogs:init dosfstools:init fakeroot:host"
+PKG_DEPENDS_INIT="libc:init busybox:init plymouth-lite:init util-linux:init e2fsprogs:init dosfstools:init terminus-font:init"
+PKG_DEPENDS_TARGET="toolchain fakeroot:host initramfs:init"
 PKG_SECTION="virtual"
-PKG_LONGDESC="debug is a Metapackage for installing initramfs"
+PKG_LONGDESC="Metapackage for installing initramfs"
 
 if [ "$ISCSI_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET open-iscsi:init"
+  PKG_DEPENDS_INIT+=" open-iscsi:init"
 fi
 
 if [ "$INITRAMFS_PARTED_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET util-linux:init"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET e2fsprogs:init"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET parted:init"
+  PKG_DEPENDS_INIT+=" parted:init"
 fi
+
+for i in $PKG_DEPENDS_INIT; do
+  PKG_NEED_UNPACK+=" $(get_pkg_directory $i)"
+done
 
 post_install() {
   ( cd $BUILD/initramfs
     if [ "$TARGET_ARCH" = "x86_64" ]; then
-      ln -sf /usr/lib $BUILD/initramfs/lib64
+      ln -sfn /usr/lib $BUILD/initramfs/lib64
       mkdir -p $BUILD/initramfs/usr
-      ln -sf /usr/lib $BUILD/initramfs/usr/lib64
+      ln -sfn /usr/lib $BUILD/initramfs/usr/lib64
     fi
 
-    ln -sf /usr/lib $BUILD/initramfs/lib
-    ln -sf /usr/bin $BUILD/initramfs/bin
-    ln -sf /usr/sbin $BUILD/initramfs/sbin
+    ln -sfn /usr/lib $BUILD/initramfs/lib
+    ln -sfn /usr/bin $BUILD/initramfs/bin
+    ln -sfn /usr/sbin $BUILD/initramfs/sbin
 
     mkdir -p $BUILD/image/
     fakeroot -- sh -c \

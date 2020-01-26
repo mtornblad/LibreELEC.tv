@@ -3,51 +3,57 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="busybox"
-PKG_VERSION="1.29.3"
-PKG_SHA256="97648636e579462296478e0218e65e4bc1e9cd69089a3b1aeb810bff7621efb7"
+PKG_VERSION="1.31.1"
+PKG_SHA256="d0f940a72f648943c1f2211e0e3117387c31d765137d92bd8284a3fb9752a998"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.busybox.net"
 PKG_URL="http://busybox.net/downloads/$PKG_NAME-$PKG_VERSION.tar.bz2"
-PKG_DEPENDS_HOST=""
-PKG_DEPENDS_TARGET="toolchain busybox:host hdparm dosfstools e2fsprogs zip unzip pciutils usbutils parted procps-ng gptfdisk libtirpc"
+PKG_DEPENDS_HOST="toolchain:host"
+PKG_DEPENDS_TARGET="toolchain busybox:host hdparm dosfstools e2fsprogs zip unzip usbutils parted procps-ng gptfdisk libtirpc"
 PKG_DEPENDS_INIT="toolchain libtirpc"
 PKG_LONGDESC="BusyBox combines tiny versions of many common UNIX utilities into a single small executable."
 # busybox fails to build with GOLD support enabled with binutils-2.25
 PKG_BUILD_FLAGS="-parallel -gold"
 
-PKG_MAKE_OPTS_HOST="ARCH=$TARGET_ARCH CROSS_COMPILE= KBUILD_VERBOSE=1 install"
-PKG_MAKE_OPTS_TARGET="ARCH=$TARGET_ARCH \
-                      HOSTCC=$HOST_CC \
-                      CROSS_COMPILE=$TARGET_PREFIX \
-                      KBUILD_VERBOSE=1 \
-                      install"
-PKG_MAKE_OPTS_INIT="ARCH=$TARGET_ARCH \
-                    HOSTCC=$HOST_CC \
-                    CROSS_COMPILE=$TARGET_PREFIX \
-                    KBUILD_VERBOSE=1 \
-                    install"
-
 # nano text editor
-  if [ "$NANO_EDITOR" = "yes" ]; then
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET nano"
-  fi
+if [ "$NANO_EDITOR" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET nano"
+fi
 
 # nfs support
 if [ "$NFS_SUPPORT" = yes ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET rpcbind"
 fi
 
+if [ "$TARGET_ARCH" = "x86_64" ]; then
+  PKG_DEPENDS_TARGET+=" pciutils"
+fi
+
 pre_build_target() {
+  PKG_MAKE_OPTS_TARGET="ARCH=$TARGET_ARCH \
+                        HOSTCC=$HOST_CC \
+                        CROSS_COMPILE=$TARGET_PREFIX \
+                        KBUILD_VERBOSE=1 \
+                        install"
+
   mkdir -p $PKG_BUILD/.$TARGET_NAME
   cp -RP $PKG_BUILD/* $PKG_BUILD/.$TARGET_NAME
 }
 
 pre_build_host() {
+  PKG_MAKE_OPTS_HOST="ARCH=$TARGET_ARCH CROSS_COMPILE= KBUILD_VERBOSE=1 install"
+
   mkdir -p $PKG_BUILD/.$HOST_NAME
   cp -RP $PKG_BUILD/* $PKG_BUILD/.$HOST_NAME
 }
 
 pre_build_init() {
+  PKG_MAKE_OPTS_INIT="ARCH=$TARGET_ARCH \
+                      HOSTCC=$HOST_CC \
+                      CROSS_COMPILE=$TARGET_PREFIX \
+                      KBUILD_VERBOSE=1 \
+                      install"
+
   mkdir -p $PKG_BUILD/.$TARGET_NAME-init
   cp -RP $PKG_BUILD/* $PKG_BUILD/.$TARGET_NAME-init
 }
@@ -118,6 +124,9 @@ makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
     [ $TARGET_ARCH = x86_64 ] && cp $PKG_DIR/scripts/getedid $INSTALL/usr/bin
     cp $PKG_DIR/scripts/createlog $INSTALL/usr/bin/
+    cp $PKG_DIR/scripts/dtfile $INSTALL/usr/bin
+    cp $PKG_DIR/scripts/dtname $INSTALL/usr/bin
+    cp $PKG_DIR/scripts/dtsoc $INSTALL/usr/bin
     cp $PKG_DIR/scripts/lsb_release $INSTALL/usr/bin/
     cp $PKG_DIR/scripts/apt-get $INSTALL/usr/bin/
     cp $PKG_DIR/scripts/sudo $INSTALL/usr/bin/
@@ -129,6 +138,10 @@ makeinstall_target() {
     cp $PKG_DIR/scripts/fs-resize $INSTALL/usr/lib/libreelec
     sed -e "s/@DISTRONAME@/$DISTRONAME/g" \
         -i $INSTALL/usr/lib/libreelec/fs-resize
+
+    if listcontains "${FIRMWARE}" "rpi-eeprom"; then
+      cp $PKG_DIR/scripts/rpi-flash-firmware $INSTALL/usr/lib/libreelec
+    fi
 
   mkdir -p $INSTALL/etc
     cp $PKG_DIR/config/profile $INSTALL/etc
@@ -169,12 +182,11 @@ post_install() {
   add_user nobody x 65534 65534 "Nobody" "/" "/bin/sh"
   add_group nogroup 65534
 
-  enable_service debug-shell.service
   enable_service shell.service
   enable_service show-version.service
   enable_service var.mount
-  enable_service var-log-debug.service
   enable_service fs-resize.service
+  listcontains "${FIRMWARE}" "rpi-eeprom" && enable_service rpi-flash-firmware.service
 
   # cron support
   if [ "$CRON_SUPPORT" = "yes" ] ; then

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.beetle-supergrafx"
-PKG_VERSION="efbdf98db76b8a3dc0ca7e328f3dba7d5b64a3e0"
-PKG_SHA256="57dc61c8bc9bfe0f44465fb40b3adf719f47a634ced50553608869363d24bf86"
-PKG_REV="109"
+PKG_VERSION="0.9.41.4-Leia"
+PKG_SHA256="0f55b4e821fca8497af4cdc88904aee35d68210873455982e107ff4626228bca"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.beetle-supergrafx"

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.bsnes-mercury-accuracy"
-PKG_VERSION="740a78c4cd05cbbc02c59d605613ee2c2342f0e7"
-PKG_SHA256="690a0e7f6bfb63c6ae4ce8ed199b2b3e25d18ee4679c3e672a0a6b2633b74359"
-PKG_REV="110"
+PKG_VERSION="0.94.0.4-Leia"
+PKG_SHA256="be7e6a2bd004a0c4ea16541f4bbf70965dee8c719ab185496ac734f8d2ff42e8"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.bsnes-mercury-accuracy"

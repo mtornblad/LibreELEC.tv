@@ -3,88 +3,91 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="samba"
-PKG_VERSION="4.9.3"
-PKG_SHA256="cf8fd8707e9ad7bce7832006aac5644155165745ba371170661b3004fa2135cf"
+PKG_VERSION="4.11.5"
+PKG_SHA256="f3e299ff62e424c0c259a2e60ca30979c8a65244d7ef6b54667902dac639d93f"
 PKG_LICENSE="GPLv3+"
 PKG_SITE="https://www.samba.org"
 PKG_URL="https://download.samba.org/pub/samba/stable/$PKG_NAME-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain attr heimdal:host e2fsprogs Python2 zlib readline popt libaio connman"
+PKG_DEPENDS_TARGET="toolchain attr heimdal:host e2fsprogs Python3 zlib readline popt libaio connman gnutls"
 PKG_NEED_UNPACK="$(get_pkg_directory heimdal) $(get_pkg_directory e2fsprogs)"
 PKG_LONGDESC="A free SMB / CIFS fileserver and client."
 PKG_BUILD_FLAGS="-gold"
 
-PKG_MAKE_OPTS_TARGET="V=1"
+configure_package() {
+  #PKG_WAF_VERBOSE="-v"
 
-if [ "$AVAHI_DAEMON" = yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET avahi"
-  SMB_AVAHI="--enable-avahi"
-else
-  SMB_AVAHI="--disable-avahi"
-fi
+  if [ "$AVAHI_DAEMON" = yes ]; then
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET avahi"
+    SMB_AVAHI="--enable-avahi"
+  else
+    SMB_AVAHI="--disable-avahi"
+  fi
 
-if [ "$TARGET_ARCH" = x86_64 ]; then
-  SMB_AESNI="--accel-aes=intelaesni"
-else
-  SMB_AESNI="--accel-aes=none"
-fi
+  if [ "$TARGET_ARCH" = x86_64 ]; then
+    SMB_AESNI="--accel-aes=intelaesni"
+  else
+    SMB_AESNI="--accel-aes=none"
+  fi
 
-PKG_CONFIGURE_OPTS="--prefix=/usr \
-                    --sysconfdir=/etc \
-                    --localstatedir=/var \
-                    --with-lockdir=/var/lock \
-                    --with-logfilebase=/var/log \
-                    --with-piddir=/run/samba \
-                    --with-privatedir=/run/samba \
-                    --with-modulesdir=/usr/lib \
-                    --with-privatelibdir=/usr/lib \
-                    --with-sockets-dir=/run/samba \
-                    --with-configdir=/run/samba \
-                    --with-libiconv=$SYSROOT_PREFIX/usr \
-                    --cross-compile \
-                    --cross-answers=$PKG_BUILD/cache.txt \
-                    --hostcc=gcc \
-                    --enable-fhs \
-                    --without-dmapi \
-                    --disable-glusterfs \
-                    --disable-rpath \
-                    --disable-rpath-install \
-                    --disable-rpath-private-install \
-                    $SMB_AVAHI \
-                    $SMB_AESNI \
-                    --disable-cups \
-                    --disable-iprint \
-                    --disable-gnutls \
-                    --with-relro \
-                    --with-sendfile-support \
-                    --without-acl-support \
-                    --without-ads \
-                    --without-ad-dc \
-                    --without-automount \
-                    --without-cluster-support \
-                    --without-dnsupdate \
-                    --without-fam \
-                    --without-gettext \
-                    --without-gpgme \
-                    --without-iconv \
-                    --without-ldap \
-                    --without-libarchive \
-                    --without-pam \
-                    --without-pie \
-                    --without-regedit \
-                    --without-systemd \
-                    --without-utmp \
-                    --without-winbind \
-                    --enable-auto-reconfigure \
-                    --bundled-libraries='ALL,!asn1_compile,!compile_et,!zlib' \
-                    --without-quotas \
-                    --with-syslog  \
-                    --without-json-audit \
-                    --without-ldb-lmdb \
-                    --nopyc --nopyo"
+  PKG_CONFIGURE_OPTS="--prefix=/usr \
+                      --sysconfdir=/etc \
+                      --localstatedir=/var \
+                      --with-lockdir=/var/lock-samba \
+                      --with-logfilebase=/var/log \
+                      --with-piddir=/run/samba \
+                      --with-privatedir=/run/samba \
+                      --with-modulesdir=/usr/lib \
+                      --with-privatelibdir=/usr/lib \
+                      --with-sockets-dir=/run/samba \
+                      --with-configdir=/run/samba \
+                      --with-libiconv=$SYSROOT_PREFIX/usr \
+                      --cross-compile \
+                      --cross-answers=$PKG_BUILD/cache.txt \
+                      --hostcc=gcc \
+                      --enable-fhs \
+                      --without-dmapi \
+                      --disable-glusterfs \
+                      --disable-rpath \
+                      --disable-rpath-install \
+                      --disable-rpath-private-install \
+                      $SMB_AVAHI \
+                      $SMB_AESNI \
+                      --disable-cups \
+                      --disable-iprint \
+                      --with-relro \
+                      --with-sendfile-support \
+                      --without-acl-support \
+                      --without-ads \
+                      --without-ad-dc \
+                      --without-automount \
+                      --without-cluster-support \
+                      --without-dnsupdate \
+                      --without-fam \
+                      --without-gettext \
+                      --without-gpgme \
+                      --without-iconv \
+                      --without-ldap \
+                      --without-libarchive \
+                      --without-pam \
+                      --without-pie \
+                      --without-regedit \
+                      --without-systemd \
+                      --without-utmp \
+                      --without-winbind \
+                      --enable-auto-reconfigure \
+                      --bundled-libraries='ALL,!asn1_compile,!compile_et,!zlib' \
+                      --without-quotas \
+                      --with-syslog  \
+                      --without-json \
+                      --without-ldb-lmdb \
+                      --nopyc --nopyo"
 
-PKG_SAMBA_TARGET="smbclient,client/smbclient,smbtree,testparm"
+  PKG_SAMBA_TARGET="smbclient,client/smbclient,smbtree,nmblookup,testparm"
 
-[ "$SAMBA_SERVER" = "yes" ] && PKG_SAMBA_TARGET+=",smbd/smbd,nmbd,smbpasswd"
+  if [ "$SAMBA_SERVER" = "yes" ]; then
+    PKG_SAMBA_TARGET+=",smbd/smbd,nmbd,smbpasswd"
+  fi
+}
 
 pre_configure_target() {
 # samba uses its own build directory
@@ -92,7 +95,7 @@ pre_configure_target() {
     rm -rf .$TARGET_NAME
 
 # work around link issues
-  export LDFLAGS="$LDFLAGS -lreadline"
+  export LDFLAGS="$LDFLAGS -lreadline -lncurses"
 
 # support 64-bit offsets and seeks on 32-bit platforms
   if [ "$TARGET_ARCH" = "arm" ]; then
@@ -104,21 +107,54 @@ configure_target() {
   cp $PKG_DIR/config/samba4-cache.txt $PKG_BUILD/cache.txt
     echo "Checking uname machine type: \"$TARGET_ARCH\"" >> $PKG_BUILD/cache.txt
 
-  PYTHON_CONFIG="$SYSROOT_PREFIX/usr/bin/python-config" \
+  export COMPILE_ET=$TOOLCHAIN/bin/heimdal_compile_et
+  export ASN1_COMPILE=$TOOLCHAIN/bin/heimdal_asn1_compile
+
+  PYTHON_CONFIG="$SYSROOT_PREFIX/usr/bin/python3-config" \
   python_LDFLAGS="" python_LIBDIR="" \
-  ./configure $PKG_CONFIGURE_OPTS
+  PYTHON=${TOOLCHAIN}/bin/python3 ./configure $PKG_CONFIGURE_OPTS
 }
 
 make_target() {
-  ./buildtools/bin/waf build --targets=$PKG_SAMBA_TARGET -j$CONCURRENCY_MAKE_LEVEL
+  ./buildtools/bin/waf build ${PKG_WAF_VERBOSE} --targets=$PKG_SAMBA_TARGET -j$CONCURRENCY_MAKE_LEVEL
 }
 
 makeinstall_target() {
-  ./buildtools/bin/waf install --destdir=$SYSROOT_PREFIX --targets=smbclient -j$CONCURRENCY_MAKE_LEVEL
-  ./buildtools/bin/waf install --destdir=$INSTALL --targets=$PKG_SAMBA_TARGET -j$CONCURRENCY_MAKE_LEVEL
+  ./buildtools/bin/waf install ${PKG_WAF_VERBOSE} --destdir=$SYSROOT_PREFIX --targets=smbclient -j$CONCURRENCY_MAKE_LEVEL
+  ./buildtools/bin/waf install ${PKG_WAF_VERBOSE} --destdir=$INSTALL --targets=$PKG_SAMBA_TARGET -j$CONCURRENCY_MAKE_LEVEL
+}
+
+copy_directory_of_links() {
+  local _tmp link
+  for link in "${1}/"*.so*; do
+    if [ -L ${link} ]; then
+      _tmp="$(readlink -m "${link}")"
+      cp -P ${_tmp} ${2}
+      cp -P ${_tmp}.* ${2} 2>/dev/null || true
+    else
+      cp -P ${link} ${2}
+    fi
+  done
+}
+
+perform_manual_install() {
+  mkdir -p ${SYSROOT_PREFIX}/usr/lib
+    copy_directory_of_links ${PKG_BUILD}/bin/shared ${SYSROOT_PREFIX}/usr/lib
+
+  mkdir -p ${INSTALL}/usr/lib
+    copy_directory_of_links ${PKG_BUILD}/bin/shared ${INSTALL}/usr/lib
+    copy_directory_of_links ${PKG_BUILD}/bin/shared/private ${INSTALL}/usr/lib
+
+  if [ "$SAMBA_SERVER" = "yes" ]; then
+    mkdir -p ${INSTALL}/usr/sbin
+      cp -L ${PKG_BUILD}/bin/smbd ${INSTALL}/usr/sbin
+      cp -L ${PKG_BUILD}/bin/nmbd ${INSTALL}/usr/sbin
+  fi
 }
 
 post_makeinstall_target() {
+  perform_manual_install
+
   rm -rf $INSTALL/usr/bin
   rm -rf $INSTALL/usr/lib/python*
   rm -rf $INSTALL/usr/share/perl*
@@ -139,6 +175,7 @@ post_makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
     cp -PR bin/default/source3/client/smbclient $INSTALL/usr/bin
     cp -PR bin/default/source3/utils/smbtree $INSTALL/usr/bin
+    cp -PR bin/default/source3/utils/nmblookup $INSTALL/usr/bin
     cp -PR bin/default/source3/utils/testparm $INSTALL/usr/bin
 
   if [ "$SAMBA_SERVER" = "yes" ]; then

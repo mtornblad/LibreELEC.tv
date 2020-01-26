@@ -1,19 +1,22 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ccache"
-PKG_VERSION="3.3.6"
-PKG_SHA256="eac8d2a5055014bebae1434d9b7c66c25d64323800808c27a4534cee167e6bea"
+PKG_VERSION="3.6"
+PKG_SHA256="c23ecf1253e0d12c9da9dda9567a88a606d46f93d9982b8b1a423d6f238bd435"
 PKG_LICENSE="GPL"
 PKG_SITE="https://ccache.samba.org/"
 PKG_URL="https://samba.org/ftp/ccache/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_HOST="make:host"
 PKG_LONGDESC="A compiler cache to speed up re-compilation of C/C++ code by caching."
 
-export CC=$LOCAL_CC
-export CXX=$LOCAL_CXX
-
 PKG_CONFIGURE_OPTS_HOST="--with-bundled-zlib"
+
+pre_configure_host() {
+  export CC=$LOCAL_CC
+  export CXX=$LOCAL_CXX
+}
 
 post_makeinstall_host() {
 # setup ccache

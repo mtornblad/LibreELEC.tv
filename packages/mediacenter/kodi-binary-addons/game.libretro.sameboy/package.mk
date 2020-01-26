@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.sameboy"
-PKG_VERSION="338c3798bbba5f2714163f2d26fe767b31026fc0"
-PKG_SHA256="44dfbed607eb877f7a952ee9fbe4bc260a21a0e486fba09c153f4100ca57e7eb"
-PKG_REV="103"
+PKG_VERSION="0.11.2.8-Leia"
+PKG_SHA256="e652ea7cac91468a914a0a473144c87edec5162d83f0ba5b75e5dfa092e6abf9"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.sameboy"

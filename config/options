@@ -4,6 +4,14 @@ if [[ "${EUID}" -eq 0 ]]; then
   exit 1
 fi
 
+# Spaces in paths are verboten
+if [[ ${PWD} =~ [[:space:]] ]]; then
+  echo "Current PWD: \"${PWD}\"" 1>&2
+  echo 1>&2
+  echo "Building in a folder that includes spaces is NOT supported. Use a folder without spaces." 1>&2
+  exit 1
+fi
+
 # set default language for buildsystem
 export LC_ALL=C
 
@@ -55,7 +63,7 @@ LINUX_DEPENDS="${PROJECT_DIR}/${PROJECT}/linux ${PROJECT_DIR}/${PROJECT}/patches
 [ -z "${LOCAL_CC}" ] && export LOCAL_CC="$(command -v gcc)"
 
 if [ -z "${LOCAL_CC}" ]; then
-  die "***** Please install gcc *****" "127"
+  die "***** Please install gcc - run scripts/checkdeps *****" "127"
 fi
 
 # Need to point to your actual g++
@@ -69,6 +77,7 @@ VERBOSE="${VERBOSE:-yes}"
 #  Try values between 1 and number of processor cores present.
 #  default: use all cores
 [ -z "${CONCURRENCY_MAKE_LEVEL}" ] && export CONCURRENCY_MAKE_LEVEL=$(nproc)
+[ -z "${CONCURRENCY_LOAD}" ] && export CONCURRENCY_LOAD=$(python3 -c "import os; print('%.2f' % (os.cpu_count() * 1.5))")
 
 # cache size for ccache
 # Set the maximum size of the files stored in the cache. You can specify a
@@ -78,7 +87,12 @@ VERBOSE="${VERBOSE:-yes}"
 # directory.
 CCACHE_CACHE_SIZE="10G"
 
-# read options from $HOME if available
+# read local persistent options from $ROOT if available
+if [ -f "${ROOT}/.libreelec/options" ]; then
+  . "${ROOT}/.libreelec/options"
+fi
+
+# read global persistent options from $HOME if available
 if [ -f "${HOME}/.libreelec/options" ]; then
   . "${HOME}/.libreelec/options"
 fi
@@ -88,9 +102,19 @@ if [ "${OEM}" = "yes" -o "${OEM}" = "no" ]; then
   OEM_SUPPORT="${OEM}"
 fi
 
-[ -z "${_DEBUG_DEPENDS_LIST+x}" ] && set_debug_depends
-
 check_config
 
 . config/graphic
 . config/path $1
+
+## package processing
+
+# If the package caches are unset, then populate them
+init_package_cache
+
+if [ -z "${DEFAULT_PYTHON_VERSION+set}" ]; then
+  export DEFAULT_PYTHON_VERSION="$(get_pkg_variable Python3 PKG_PYTHON_VERSION)"
+fi
+
+# set package metadata
+source_package "${1}"

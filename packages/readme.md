@@ -33,7 +33,7 @@ To control the build behaviour of your package, use variables in the top-down or
 | PKG_NEED_UNPACK | -   | no  | Space separated list of files or folders to include in package stamp calculation. If the stamp is invalidated through changes to package files or dependent files/folders the package is cleaned and rebuilt. e.g. `PKG_NEED_UNPACK="$(get_pkg_directory linux)"` will trigger clean/rebuild of a Linux kernel driver package when a change to the `linux` kernel package is detected. |
 | PKG_TOOLCHAIN | auto  | no  | Control which build toolchain is used. For detailed information, see [reference](#toolchain-options). |
 | PKG_BUILD_FLAGS | -   | no  | A space separated list of flags with which to fine-tune the build process. Flags can be enabled or disabled with a `+` or `-` prefix. For detailed information, see the [Reference](#build_flags-options). |
-| PKG_PYTHON_VERSION | python2.7 | no | Define the Python version to be used. |
+| PKG_PYTHON_VERSION | python3.7 | no | Define the Python version to be used. |
 | PKG_IS_KERNEL_PKG | - | no  | Set to `yes` for packages that include Linux kernel modules |
 
 #### Meson Options
@@ -77,7 +77,7 @@ Additional options used when the package builds an addon.
 | PKG_ADDON_IS_STANDALONE | - | no | Defines if an addon depends on Kodi (on) or is standalone (yes) |
 | PKG_ADDON_BROKEN | -  | no       | Marks an addon as broken for the user |
 
-#### Detail Infomations for Options
+#### Detailed Information for Options
 
 ##### TOOLCHAIN options
 
@@ -114,17 +114,20 @@ Build flags implement often used build options. Normally these are activated be 
 
 Set the variable `PKG_BUILD_FLAGS` in the `package.mk` to enable/disable the single flags. It is a space separated list. The flags can enabled with a `+` prefix, and disabled with a `-`.
 
-| flag     | default  | affected stage | description |
-|----------|----------|----------------|-------------|
-| pic      | disabled | target/init    | [Position Independent Code](https://en.wikipedia.org/wiki/Position-independent_code) |
-| pic:host | disabled | host/bootstrap | see above |
-| lto      | disabled | target/init    | enable LTO (Link Time optimization) in the compiler and linker unless disabled via `LTO_SUPPORT`. Compiles non-fat LTO objects (only bytecode) and performs single-threaded optimization at link stage |
-| lto-parallel | disabled | target/init | same as `lto` but enable parallel optimization at link stage. Only enable this if the package build doesn't run multiple linkers in parallel otherwise this can result in lots of parallel processes! |
-| lto-fat  | disabled | target/init | same as `lto` but compile fat LTO objects (bytecode plus optimized assembly). This increases compile time but can be useful to create static libraries suitable both for LTO and non-LTO linking |
-| lto-off  | disabled | target/init | explicitly disable LTO in the compiler and linker |
-| gold     | depend on `GOLD_SUPPORT` | target/init | can only disabled, use of the GOLD-Linker |
+| flag     | default  | affected stage(s) | description |
+|----------|----------|-------------------|-------------|
+| pic      | disabled | target, init      | [Position Independent Code](https://en.wikipedia.org/wiki/Position-independent_code) |
+| pic:host | disabled | host, bootstrap   | see above |
+| speed    | disabled | target, init      | replaces default `-O2` compiler optimization with `-O3` (can only enable; overrules size) |
+| size     | disabled | target, init      | replaces default `-O2` compiler optimization with `-Os` (can only enable) |
+| lto      | disabled | target, init      | enable LTO (Link Time optimization) in the compiler and linker unless disabled via `LTO_SUPPORT`. Compiles non-fat LTO objects (only bytecode) and performs single-threaded optimization at link stage |
+| lto-parallel | disabled | target, init  | same as `lto` but enables parallel optimization at link stage. Only enable this if the package build doesn't run multiple linkers in parallel otherwise this can result in lots of parallel processes! |
+| lto-fat  | disabled | target, init      | same as `lto` but compile fat LTO objects (bytecode plus optimized assembly). This increases compile time but can be useful to create static libraries suitable both for LTO and non-LTO linking |
+| lto-off  | disabled | target, init      | explicitly disable LTO in the compiler and linker |
+| gold     | enabled by `GOLD_SUPPORT` | target, init | do not use GOLD-Llinker (can only disable) |
 | parallel | enabled  | all | `make` or `ninja` builds with multiple threads/processes (or not) |
 | strip    | enabled  | target | strips executables (or not) |
+| sysroot  | enabled  | target | installs the package to the sysroot folder (or not) |
 
 ###### Example
 ```
@@ -133,8 +136,8 @@ PKG_BUILD_FLAGS="-parallel"
 ```
 
 ## Functions
-All build steps in the LibreELEC build system, a done by shell function.
-These functions can overwritten in the `package.mk`. But this raises problems, when the build system is updated. To reduce the problem, most function was extended by `pre_` and `post_` scripts, to use instead.
+All build steps in the LibreELEC build system are done by shell function.
+These functions can be overwritten in the `package.mk`. However, this raises problems when the build system is updated. To reduce the impact, most functions are extended by `pre_` and `post_` scripts to use instead.
 
 When it is nesseary to replace configure, make and makeinstall, please use `PKG_TOOLCHAIN="manual"`.
 
@@ -144,77 +147,154 @@ Full list of overwrittable functions.
 
 | function                | stages specific | description |
 |-------------------------|--------|-------------|
+| configure_package | - | Optional function to implement late binding variable assignment (see below) |
 | unpack<br>pre_unpack<br>post_unpack | - | Extract the source from the downloaded file |
 | pre_patch<br>post_patch | -      | Apply the patches to the source, after extraction. The patch function it self is not allowed to overwritten |
 | pre_build_\[stage]      | yes    | Runs before of the start of the build |
-| configure_\[stage]<br>pre_configure_\[stage]<br>post_configure_\[stage] | yes | Configure the package for the compile. This is only relevant for toolchain, that supports it (e.g. meson, cmake, configure, manual) |
+| pre_configure<br>pre_configure_\[stage]<br>configure_\[stage]<br>post_configure_\[stage] | yes | Configure the package for the compile. This is only relevant for toolchain, that supports it (e.g. meson, cmake, configure, manual) |
 | make_\[stage]<br>pre_make_\[stage]<br>post_make_\[stage] | yes | Build of the package |
 | makeinstall_\[stage]<br>pre_makeinstall_\[stage]<br>post_makeinstall_\[stage] | yes | Installation of the files in the correct pathes<br>host: TOOLCHAIN<br>target: SYSROOT and IMAGE<br>bootstrap and init: temporary destination
 | addon                   | -      | Copy all files together for addon creation. This is requiered for addons |
+| post_install_addon      | -      | Post processing of installed addon files in `${INSTALL}` directory |
 
-###### Example
+## Late Binding variable assignment
+
+A package will be loaded only once, by the call to `config/options`. During this process, additional package specific variables will be initialised, such as:
+
+* `PKG_BUILD` - path to the build folder
+* `PKG_SOURCE_NAME` - if not already specified, generated from `PKG_URL`, `PKG_NAME` and` PKG_VERSION`
+
+Since these variables will not exist at the time the package is loaded, they can only be referenced **after** package has loaded. This can be accomplished by referencing these variables in the `configure_package()` function which is executed once the additional variables have been assigned.
+
+If necessary, the following variables would be configured in `configure_package()` as they are normally relative to `${PKG_BUILD}`:
 ```
+  PKG_CONFIGURE_SCRIPT
+  PKG_CMAKE_SCRIPT
+  PKG_MESON_SCRIPT
+```
+
+Further to this, toolchain variables that are defined in `setup_toolchain()` must not be referenced "globally" in the package as they will only be configured reliably after `setup_toolchain()` has been called during `scripts/build`. Any variable in the following list must instead be referenced in a package function such as `pre_build_*`, `pre_configure_*`, `pre_make_*` etc.:
+```
+  TARGET_CFLAGS TARGET_CXXFLAGS TARGET_LDFLAGS
+  NINJA_OPTS MAKEFLAGS
+  DESTIMAGE
+  CC CXX CPP LD
+  AS AR NM RANLIB
+  OBJCOPY OBJDUMP
+  STRIP
+  CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+  PKG_CONFIG
+  PKG_CONFIG_PATH
+  PKG_CONFIG_LIBDIR
+  PKG_CONFIG_SYSROOT_DIR
+  PKG_CONFIG_ALLOW_SYSTEM_CFLAGS
+  PKG_CONFIG_ALLOW_SYSTEM_LIBS
+  CMAKE_CONF CMAKE
+  HOST_CC HOST_CXX HOSTCC HOSTCXX
+  CC_FOR_BUILD CXX_FOR_BUILD BUILD_CC BUILD_CXX
+  _python_sysroot _python_prefix _python_exec_prefix
+```
+
+Lastly, the following variables are assigned during `scripts/build` but some packages may need to use alternative values for these variables. To do so, the package must assign alternative values in `pre_build_*`/`pre_configure_*`/`pre_make_*` etc. functions as these functions will be called after the variables are initialised with default values in `scripts/build` but before they are used by `scripts/build`.
+```
+  CMAKE_GENERATOR_NINJA
+
+  TARGET_CONFIGURE_OPTS
+  TARGET_CMAKE_OPTS
+  TARGET_MESON_OPTS
+
+  HOST_CONFIGURE_OPTS
+  HOST_CMAKE_OPTS
+  HOST_MESON_OPTS
+
+  INIT_CONFIGURE_OPTS
+  INIT_CMAKE_OPTS
+  INIT_MESON_OPTS
+
+  BOOTSTRAP_CONFIGURE_OPTS
+  BOOTSTRAP_CMAKE_OPTS
+  BOOTSTRAP_MESON_OPTS
+```
+
+#### Example
+```
+configure_package() {
+  # now we know where we're building, assign a value
+  PKG_CONFIGURE_SCRIPT="${PKG_BUILD}/gettext-tools/configure"
+}
+
 post_patch() {
   # replace hardcoded stuff
-  sed -i $PKG_BUILD/Makefile 's|hardcoded stuff|variabled stuff|'
+  sed -i ${PKG_CONFIGURE_SCRIPT} 's|hardcoded stuff|variable stuff|'
 }
 
 pre_configure_target() {
+  # add extra flag to toolchain default
   CFLAGS="$CFLAGS -DEXTRA_FLAG=yeah"
 }
 
 post_makeinstall_target() {
-  # remove unused executable, only library needed
+  # remove unused executable, install what remains
   rm $INSTALL/usr/bin/bigexecutable
 }
 ```
 
+#### tools/pkgcheck
+
+Use `tools/pkgcheck` to verify packages. It detects the following issues:
+
+Issue | Level | Meaning |
+| :--- | :----: | ---- |
+| late&nbsp;binding&nbsp;violation | FAIL | Late binding variables referenced outside of a function - see [late binding](https://github.com/LibreELEC/LibreELEC.tv/blob/master/packages/readme.md#late-binding-variable-assignment) |
+| duplicate&nbsp;function&nbsp;def | FAIL | Function defined multiple times, only last definition will be used |
+| bad&nbsp;func&nbsp;-&nbsp;missing&nbsp;brace | FAIL | Opening brace (`{`) for function definition should be on same line as the function def, ie. `pre_configure_target() {` |
+| intertwined&nbsp;vars&nbsp;&&nbsp;funcs | WARN | Variable assignments and logic is intertwined with functions - this is cosmetic, but variables and logic should be specified before all functions |
+| unknown&nbsp;function | WARN | Could be a misspelled function, ie. `per_configure_target() {` which might fail silently.|
+| ignored&nbsp;depends&nbsp;assign | WARN | Values assigned to `PKG_DEPENDS_*` outside of the global section or `configure_package()` will be ignored. |
+
+
 ## Add a new package to the Image
-1. Think about, why you needs it in the image.
+1. Think about, why you need it in the image.
     * new multimedia tool
     * add a new network tool
     * new kernel driver
     * ...
-2. Find a place in the packages-tree
-    * look into the package-tree, i think most is self explaind. When 1. was done, this is going fast :)
-    * do not place it, in an existing package (directory with includes a `package.mk`)
-    * when you found a place, create a directory with the name of your package (must the same like `PKG_NAME`!!)
-3. Create a initial `package.mk`
-    * you found a template under `packages/package.mk.template`. Copy the template into the new directory and call it `package.mk`
-    * edit your new `package.mk`
-4. Find a place in the dependency tree. When 1. was done, this is going fast, again :)
-    * when it extend an existing package, add it there to the `PKG_DEPENDS_TARGET`
-    * take a look into the path `packages/virtual`, there you should find a virtual packages, that match your new package (misc-packages should the last option)
-5. now you can build your image
-    * after the build, under build-[...]/ should apear a directory with your package-name and -version.
+2. Find a place in the packages tree
+    * look into the package tree structure, which is generally self explaind.
+    * do not place it in an existing package (directory that includes a `package.mk`)
+    * when you found a place, create a directory with the name of your package (use same value for `PKG_NAME`!!)
+3. Create an initial `package.mk`
+    * you can find a template under `packages/package.mk.template`. Copy the template into the new directory and call it `package.mk`
+    * apply any required changes to your new `package.mk`
+4. Find a place in the dependency tree
+    * when it extend an existing package, add it there to the `PKG_DEPENDS_TARGET`/`PKG_DEPENDS_HOST` etc.
+    * take a look into the path `packages/virtual`, there you should find a virtual packages, that match your new package (misc-packages should be the last option)
+5. Now you can build your image
+    * after the build, inside the `BUILD_DIR` (normally build.*) folder you should find a directory with your package name and -version, eg. `widget-1.2.3`.
 
 ## Example
 ```
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mariadb-connector-c"
 PKG_VERSION="3.0.2"
 PKG_SHA256="f44f436fc35e081db3a56516de9e3bb11ae96838e75d58910be28ddd2bc56d88"
-PKG_ARCH="any"
 PKG_LICENSE="LGPL"
 PKG_SITE="https://mariadb.org/"
 PKG_URL="https://github.com/MariaDB/mariadb-connector-c/archive/v$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain zlib openssl"
-PKG_SECTION="database"
-PKG_SHORTDESC="mariadb-connector: library to conntect to mariadb/mysql database server"
 PKG_LONGDESC="mariadb-connector: library to conntect to mariadb/mysql database server"
+PKG_BUILD_FLAGS="-gold"
 
-PKG_CMAKE_OPTS_TARGET="-DWITH_EXTERNAL_ZLIB=ON
-                       -DAUTH_CLEARTEXT=STATIC
-                       -DAUTH_DIALOG=STATIC
-                       -DAUTH_OLDPASSWORD=STATIC
-                       -DREMOTEIO=OFF
-                      "
+PKG_CMAKE_OPTS_TARGET="-DWITH_EXTERNAL_ZLIB=ON \
+                       -DAUTH_CLEARTEXT=STATIC \
+                       -DAUTH_DIALOG=STATIC \
+                       -DAUTH_OLDPASSWORD=STATIC \
+                       -DREMOTEIO=OFF"
 
 post_makeinstall_target() {
   # drop all unneeded
   rm -rf $INSTALL/usr
 }
 ```
-

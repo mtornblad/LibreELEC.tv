@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.prosystem"
-PKG_VERSION="450fcc3cd3178d3d6b310b578149c455ee3a0c8f"
-PKG_SHA256="8a064c86b318a56b2da3920cdfaa8675cc12d134c434efc4d88fbe8521d3cd00"
-PKG_REV="111"
+PKG_VERSION="1.3.0.5-Leia"
+PKG_SHA256="7e4b892021d021d69468ad2ab6f63297ae09f7634b5205e495389c29d5ad3f0f"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.prosystem"

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.bluemsx"
-PKG_VERSION="87aae5594c88be4055090dad887da4783022af6c"
-PKG_SHA256="3200db96dbf4817d04b9766422e7b37cc7253182f1dd20e26103f6dc7a8efdfe"
-PKG_REV="110"
+PKG_VERSION="0.0.1.7-Leia"
+PKG_SHA256="bb35e6a8e2428645f3ce93cdad18fca23b39c4c72cc8f4cd030b19fa145174e8"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.bluemsx"

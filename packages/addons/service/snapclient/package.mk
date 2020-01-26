@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="snapclient"
@@ -23,6 +23,6 @@ addon() {
      "$ADDON_BUILD/$PKG_ADDON_ID/bin"
 
   mkdir -p "$ADDON_BUILD/$PKG_ADDON_ID/lib"
-  cp "$(get_build_dir alsa-plugins)/.install_pkg/usr/lib/alsa"/*.so \
+  cp "$(get_install_dir alsa-plugins)/usr/lib/alsa"/*.so \
      "$ADDON_BUILD/$PKG_ADDON_ID/lib"
 }

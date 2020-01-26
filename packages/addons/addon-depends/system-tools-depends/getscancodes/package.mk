@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="getscancodes"
@@ -10,7 +10,9 @@ PKG_URL="$SOURCEFORGE_SRC/keytouch/getscancodes-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="Shows the scancode of the pressed or released key."
 
-PKG_MAKE_OPTS_TARGET="CC=$CC"
+pre_configure_target() {
+  PKG_MAKE_OPTS_TARGET="CC=$CC"
+}
 
 makeinstall_target() {
   : # nop

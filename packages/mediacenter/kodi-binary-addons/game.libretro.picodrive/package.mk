@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.picodrive"
-PKG_VERSION="3eea365eaf09e52fc5dbb3a37dea1695deb87e82"
-PKG_SHA256="8413de8099388b0b988cb7a4564e010cb11e05d3616acc772873be0c4edc0125"
-PKG_REV="109"
+PKG_VERSION="1.92.0.7-Leia"
+PKG_SHA256="1c11dc6a2ae59e52c082b3e50f4ae85eb8531e98de754ce31a4005c4f4a1b1f4"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.picodrive"

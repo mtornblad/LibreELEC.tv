@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.snes9x"
-PKG_VERSION="d19ad4adf81808ddd324ef25630ce560a6c688e8"
-PKG_SHA256="1263ccb161012d3a47df47a38097c9bc5e877469b3e7e1149f84c4217bf08648"
-PKG_REV="110"
+PKG_VERSION="1.60.0.8-Leia"
+PKG_SHA256="a868e4eda0698f7b175bb317e4ee4cabd8f9de03a1176b94b5a6086f4b621943"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.snes9x"

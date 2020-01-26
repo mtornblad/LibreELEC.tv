@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-fbalpha"
-PKG_VERSION="bfededf36c4ca6f37926a66822d860a9754080c3"
-PKG_SHA256="0c31bb6fe84f2dfa9adead0a6fd23cb2d516c96c7213cec89e66444e13fe8478"
+PKG_VERSION="3edb7789803aaefeb34907f8dfec9d5bf26486ed"
+PKG_SHA256="3cd1b78fd1b253c798cd2ed1948e5d5ec4d481a398c323435108b3c3f5e29dab"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/fbalpha"
 PKG_URL="https://github.com/libretro/fbalpha/archive/$PKG_VERSION.tar.gz"
@@ -15,9 +15,9 @@ PKG_LIBNAME="fbalpha_libretro.so"
 PKG_LIBPATH="$PKG_LIBNAME"
 PKG_LIBVAR="FBALPHA_LIB"
 
-PKG_MAKE_OPTS_TARGET="-f makefile.libretro CC=$CC CXX=$CXX GIT_VERSION=${PKG_VERSION:0:7}"
-
 pre_make_target() {
+  PKG_MAKE_OPTS_TARGET="-f makefile.libretro CC=$CC CXX=$CXX GIT_VERSION=${PKG_VERSION:0:7}"
+
   if [ "$PROJECT" = "RPi" ]; then
     case $DEVICE in
       RPi)
