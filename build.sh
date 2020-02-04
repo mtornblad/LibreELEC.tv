@@ -26,10 +26,10 @@
 #PROJECT=Amlogic DEVICE=WeTek_Play_2 ARCH=arm
 
 # WeTek Play
-#PROJECT=WeTek_Play ARCH=arm
+PROJECT=WeTek_Play ARCH=arm
 
 # WeTek Core
-PROJECT=WeTek_Core ARCH=arm
+# PROJECT=WeTek_Core ARCH=arm
 
 # Rockchip RK3328
 #PROJECT=Rockchip DEVICE=RK3328 ARCH=arm UBOOT_SYSTEM=box
@@ -52,4 +52,6 @@ PROJECT=WeTek_Core ARCH=arm
 # SOURCES_DIR=/server/dev/sources
 
 
-make image
+PROJECT=WeTek_Play ARCH=arm make image
+PROJECT=WeTek_Play ARCH=arm scripts/create_addon all
+
